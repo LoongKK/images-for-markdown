@@ -1,0 +1,343 @@
+1.计算两点欧几里德距离的函数：
+double dist(double x1, double y1, double x2, double y2) {  
+	return sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)); 
+}
+
+2.为了使用方便，往往用“ typedef struct { 域定义; }类型名; ”的方式定义一个 新类型名
+
+3.素数判定
+//n=1或者n太大时请勿调用。n=1会被错误地判断为素数（因为确实没有其他因子）。n太大时i*i可能会溢出！如果n是一个接近int的最大值的素数，则当循环到i=46340 
+ int is_prime(int n) {  
+for(int i = 2; i*i <= n; i++)    
+	if(n % i == 0) return 0;
+	return 1; 
+}
+两个小技巧。一是只判断不超过sqrt(x)的整数i（想一想，为什么）。
+二 是及时退出：一旦发现x有一个大于1的因子，立刻返回0（假），只有最后才返回1（真）。 
+函数名的选取是有章可循的，“is_prime”取自英文“is it a prime？”（它是素数吗？）。
+改良版：
+int is_prime(int n) {  
+	if(n <= 1) return 0;  
+	int m = floor(sqrt(n) + 0.5);  //double floor( double arg );功能函数返回参数不大于arg的最大整数。+0.5是四舍五入。
+	for(int i = 2; i <= m; i++)    
+		if(n % i == 0) 
+			return 0; 
+	return 1; }
+除了特判n≤1的情况外，程序中还使用了变量m，一方面避免了每次重复计算sqrt(n)，另 一方面也通过四舍五入避免了浮点误差。
+
+c语言用sqrt求素数原理：
+质数(又称素数),是指在大于1的自然数中,除了1和它本身外,不能被其他自然数整除(除0以外)的数称之为素数(质数)。
+比1大但不是素数的数称为合数，1和0既非素数也非合数。
+如果不用素数筛法的话，一般都是for求的。
+设该数为n，则若该数为质数，则有a*b=n始终成立(a,b>1)。
+当a<=sqrt(n)时
+n/sqrt(n)=sqrt(n)
+则n/a>=sqrt(n)
+n/a=b
+所以b>=sqrt(n)
+可以发现，一个素数的两个因数，至少有其中一个小于等于根号n。
+可推得
+	若一个整数没有至少一个因数小于根号n，则它不为素数。
+综上，sqrt(n)为判断素数的最小临界条件。
+
+返回值为什么不用long long ？当n很大时，上述函数并不能很快计算出。可以使用数组“大整数”
+
+4.一串不定个数的数字输入方法
+ int x, n = 0,a[100];  
+ while(scanf("%d", &x) == 1)    a[n++] = x; 
+ n也可得到了个数
+ 
+5.数组复制
+ memcpy(b,a,sizeof(a));
+ 数组不能够进行赋值操作：int a[10]，b[10];是不能赋值b＝a的。
+ 如果要从数组a复制k个元素到数组b，可以这样做：memcpy（b，a，sizeof（int）*k）。
+ 当然，如果数组a和b 都是浮点型的，复制时要写成“memcpy（b，a，sizeof（double）*k）”。
+ 另外需要注意的是， 使用memcpy函数要包含头文件string.h。
+ 如果需要把数组a全部复制到数组b中：memcpy（b，a，sizeof（a））。
+
+6.比较大的数组应尽量声明在main函数外，否则程序可能无法运行。
+
+7.一种”空格隔开，最后不能有多余空格“输出方法
+int first=1;
+if(first) first = 0; 
+else printf(" "); 
+printf("%d", a); 
+
+8.数组初始为0
+int num[100]={0};//只能设为0。默认值只能设为0，且只有在初始化时，才能设为0（num[100]={0}这么写是错的）；如果设为1，则只是sum[0]是1，其他默认全为0；
+更灵活的方法：
+//#include <cstring>//string.h
+memset(sum,0,sizeof(sum));//可以赋值零或其它数
+memset(a,0,sizeof(a)); 或者memset(a,0,sizeof(int)*n)数组赋值
+memset(str,'\0',sizeof(str));//可对字符串操作
+
+9.取模就是取余数:
+m模n，m对n取模 (c语言表示 m%n ) 就是取用 m 除以 n 得到的余数
+
+10.判断一个数是否是立方数（是某数的三次方）
+int check(int n) {
+	int i;
+	for(i = 1; ; i++)
+		if(i*i*i>=n) break;
+	return i*i*i==n;
+}
+平方数同理
+
+11.全局变量的初值
+全局变量不赋值的话， 是被出化成零的， 全局变量在静态数据段里， 这个数据段是被设置成零的。
+全局变量是按类型初始化的.int 是0, float 是 0.0, 指针是指向0。。。
+局部变量不赋值的话,值是随机的.
+
+12.程序运行时间
+#ifndef ONLINE_JUDGE
+	//freopen("in.txt","r",stdin);
+	//freopen("out.txt","w",stdout);
+    clock_t _begin_time = clock();
+#endif
+。。。
+#ifndef ONLINE_JUDGE
+      clock_t _end_time = clock();
+      printf("\ntime = %ld ms\n", _end_time - _begin_time);
+     //printf("\ntime = %ld s\n", (double)(_end_time - _begin_time)/CLOCKS_PER_SEC);
+#endif
+
+13.数组大小可以使用const声明的常数
+声明数组时，数组大小可以使用const声明的常数。
+const int N=10;
+这在C99中是不允许的。在C＋＋中，这种写法更为推荐，而不是用#define声明常数。
+
+14.避免不必要的strlen调用
+如果字符串很长，则strlen函数的开销将不容忽视。 为了避免不必要的strlen调用，可以在某个变量中保存字符串的长度
+
+15.一个小知识：C++可以用布尔型bool
+C＋＋中的数据类型和C语言很接近，最显著的区别是多了一个bool来表示布尔值，然后用true和false分别表示真和假。
+虽然仍然可以用int来表示真假，但是用bool可以让程序更清晰。
+
+16.不能在函数中定义一个数组然后返回它的地址
+不能在函数中定义一个数组然后返回它的地址，因为函数返回后其中局部变量的地址便失效了。
+
+17.c++中的字符串
+C＋＋提供了一个新的string类型，用来替代C语言中的字符数组。
+用户仍然可以继续用字符数组当字符串用，但是如果希望程序更加简单、自然，string类型往往是更好的选择。 
+例如，C＋＋的cin/cout可以直接读写string类型，却不能读写字符数组；
+string类型还可以像 整数那样“相加”，而在C语言里只能使用strcat函数。
+C＋＋在string头文件里定义了string类型，直接支持流式读写。string有很多 方便的函数和运算符，但速度有些慢。
+
+18.不要让程序“按任意键退出”
+不要让程序“按任意键退出”（例如，调用system("pause")，或者添加一个多余的 getchar()），因为不会有人来“按任意键”的。
+不少早期的C语言教材会建议在程序的最后添加 这样一条语句来“观察输出结果”，但注意千万不要在算法竞赛中这样做。
+
+19.在算法竞赛中，输入前不要打印提示信息。
+输出完毕后应立即终止程序，不要等待用户按键，因为输入输出过程都是自动的，没有人工干预。
+
+20.在算法竞赛中不要使用头文件conio.h，包括getch()、clrscr()等函数。
+在一般情况下，你的程序不能直接读取键盘和控制屏幕：不要在算法竞赛中使用 getch()、getche()、gotoxy()和clrscr()函数（早期的教材中可能会介绍这些函数）。
+
+21.输出时除非特别说明，每行的行首不应有空格，但行末通常可以有多余空格
+在算法竞赛中，每行输出均应以回车符结束，包括最后一行。除非特别说明，每行的行首不应有空格，但行末通常可以有多余空格。另外，输出的每两个数或者字符 串之间应以单个空格隔开。
+总结一下，算法竞赛的程序应当只做3件事情：读入数据、计算结果、打印输出。不要 打印提示信息，不要在打印输出后“暂停程序”，更不要尝试画图、访问网络等与算法无关的 任务。
+
+22.一个大神的模板
+// Author: wlzhouzhuan
+#pragma GCC optimize(2)
+#pragma GCC optimize(3)
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define ull unsigned long long
+#define rint register int
+#define rep(i, l, r) for (rint i = l; i <= r; i++)
+#define per(i, l, r) for (rint i = l; i >= r; i--)
+#define mset(s, _) memset(s, _, sizeof(s))
+#define pb push_back
+#define pii pair <int, int>
+#define mp(a, b) make_pair(a, b)
+
+inline int read() {//快读
+  int x = 0, neg = 1; char op = getchar();
+  while (!isdigit(op)) { if (op == '-') neg = -1; op = getchar(); }
+  while (isdigit(op)) { x = 10 * x + op - '0'; op = getchar(); }
+  return neg * x;
+}
+inline void print(int x) {//快写
+  if (x < 0) { putchar('-'); x = -x; }
+  if (x >= 10) print(x / 10);
+  putchar(x % 10 + '0');
+}
+
+23.快读
+快读(快速读入)
+解释
+因为getchar()比scanf要快,故为了加快读入,可以用getchar()代替scanf.
+思路
+利用getchar()将数字读入,若为” “或”\n”结束,第一个字符判断一下数字的正负,然后每读入一个数字就将当前数*10并加上它
+代码
+方式一
+inline int read() {
+    char ch = getchar(); int x = 0, f = 1;
+    while(ch < '0' || ch > '9') {if(ch == '-') f = -1;ch = getchar();} 
+	while(ch >= '0' && ch <= '9') {x = x * 10 + ch - '0';ch = getchar();} 
+	return x * f;
+}
+
+方式二
+void read(int &x) {
+    char ch = getchar(); x = 0;int f = 1;
+    while (ch < '0' || ch > '9')   {if (ch == '-') f = -1; ch = getchar();}
+    while (ch >= '0' && ch <= '9') {x = x * 10 + ch - '0'; ch = getchar();}
+    x *= f;
+}
+引用(&)和指针都是对地址进行操作。
+不同地方就是引用只能赋值一次不能改变，指针可以指向其他地址。
+引用对地址操作会更安全(在获得目标地址的同时也创建了新的地址去暗自备份了目标的数据,在丢失目标地址后就转向备份)
+指针会在丢失目标地址后报错。
+
+方式三
+该方法利用了cctype库中的字符判断函数isdigit()，其效率与手写ASCII码判断几乎不相上下，甚至更快.
+使用模板template的快速读入。它可以读取任何格式的整型数据。这样我们就不用担心读入数据会不会爆int的问题；
+#define gtc() getchar()
+template <class T>
+inline void read(T &s){
+	T w = 1, ch = gtc(); s = 0;
+	while(!isdigit(ch)){if(ch == '-') w = -1; ch = gtc();}
+	while(isdigit(ch)){s = s * 10 + ch - '0'; ch = gtc();}
+	s *= w;
+}
+typename和class在作为参数类型时用法一样, 没有区别
+方式4
+template <typename T>    
+void read(T &x) {    
+    x = 0;    
+    int f = 1;    
+    char ch = getchar();    
+    while (!isdigit(ch)) {if (ch == '-') f = -1;ch = getchar();    }    
+    while (isdigit(ch)) {    
+        x = x * 10 + (ch ^ 48); //使用到了位运算 异或（不同为1，相同为0） 48是‘0’的ASCII码 00110000  假如字符'2'（00110010）与其异或  结果00000010 为2
+        ch = getchar();    
+    }    
+    x *= f;     
+}   
+使用模板的快写。
+template <typename T>  
+void write(T x)    
+{   
+	if(x < 0) {putchar('-');x = -x;}
+    if(x > 9)write(x/10);
+	putchar(x % 10 + '0');    
+}    
+
+懒人（假）快读？这个叫做写的更快的读入.。。
+1）
+#define read(n) scanf("%d", &n);
+
+2）
+inline int read(){
+	int x;
+	cin>>x
+	return x;
+}
+
+拓展：
+getchar();从键盘读取一个字符并输出，该百函数的返回值是输入第一个字符的ASCII码；若用户输入的是一连串字符，函数直到用户输入回车时结束，输入的字符连同回车一起存入键盘缓冲区。若程序中有后继的getchar();函数，则直接从缓冲区逐个读取已输入的字符并度输出，直到缓冲区为空时才重新读取用户的键盘输入。
+getch();接受一个任意键的输入，不用按回车就返回。该函数的返回值是回所输入字符的ASCII码，且该函数的输入不会自动显示在屏幕上，需要putchar();函数输出显示。getch();函数常用于中途暂停程序方便调试和查看。
+getchar();和getch();的另一个区别就是所需要包含的头文件不同答。
+getchar();用#include<stdio.h>
+getch(); 用#include<conio.h>
+
+一些问题：
+快读快写比标准输入输出流以及C的格式化输入输出要快，主要是由于直接利用了单个字符操作，并且适用范围仅限所定义的返回类型与输出类型，牺牲了标准输入输出的普适性而换取了效率，在算法竞赛中具有广泛的应用空间。
+快读、快写函数的实现分别用到了循环和递归，从理论上讲无法完成内联，inline建议不会被编译器采纳；通过在vijos上对某一需要大量输入的题目使用快读进行测试，可以发现read()前加入或不加入inline的效率几乎相同。由此可以判断inline大概率被忽略，或是函数调用和返回的时间微不足道，个人认为inline没有必要。（不理解的同学可从资料和各大博客了解内联函数的相关知识）
+利用了cctype库中的字符判断函数isdigit()，其效率与手写ASCII码判断几乎不相上下，甚至更快，可以说同时实现了简洁与快捷，建议使用。
+理论上效率较高的写法是将read中所定义的变量加入寄存器建议，但是实测的效率相差并不大。依然有指令被编译器忽略的可能性，因此加不加入就看自己的想法了。
+int read(void)函数也可以写成void read(&int)的形式（对地址进行直接赋值操作），效率方面没有太大差别，可以按照个人爱好采用不同风格。
+一种使用fread()函数可以进一步显著提升读入效率，但写法较为复杂，且需要额外开辟内存，出错率高，在OI中用途有限，有兴趣的同学可以自行学习了解。
+
+24.造数据
+#include<bits/stdc++.h>
+using namespace std;
+int main()
+{
+        freopen("in.txt","w",stdout);//设置 cout printf 这些输出流都输出到 test.in里面去
+        srand(time(NULL));
+        /*
+                写需要输出的数据 例如1e4个[0，100）以内的数
+		for(int i=0;i<1e4;i++)
+        cout<<rand()%100<<endl;//随机生成[0，100）以内的数。rand()范围0~32767
+
+        */
+		
+		 /*       //写需要输出的数据 例如1000个[1，1000]的数
+		for(int i=0;i<1000;i++){
+		int n;
+		do{
+			n=rand()%1001;
+		}while(n==0);
+        cout<<n<<endl;
+	}
+	*/
+        return 0;
+}
+
+关于srand （可以不写
+这个函数在C/C++中经常跟rand函数一起使用，srand是随机数发生器的初始化函数
+? ? ? ? 在C中：这两个函数都位与<stdlib.h>头文件里面
+? ? ?在C++中：两个函数都位与<cstdlib>（被包含于iostream中）
+? ? ?原型：void ?srand（unsigned ?int ? seed）
+? ? ? ? ? ? ? ? void ?rand ?（void）
+seed相当于一个种子，srand函数根据这个种子seed，设置一个随机起点，而rand函数根据这个随机起点，返回一个随机数【seed ? ，RAND_MAX】,其中RAND_MAX是0x7ffff，但是是一个伪的随机数（多次编译产生的随机数是一样的，除非给一个变化的种子）
+rand函数每一次被调用的时候，它都会查看之前是否调用了srand函数
+如果调用了，则会调用srand（seed）来初始化它的随机值
+如果没有调用，则会默认的调用srand（1）来初始化它的随机值
+
+所以说：即使程序中没有调用srand，也和调用了srand（1）是一样的效果；并且为了让每一次程序的调用都产生不同的值，所以常常使用系统时间来初始化，也就引入了time（NULL）
+
+25. cin、cout加速
+
+ios::sync_with_stdio(0), cin.tie(0);
+即
+ std::ios::sync_with_stdio(false);
+ std::cin.tie(NULL);
+	
+static bool sync_with_stdio( bool sync=true );
+sync_with_stdio()函数有打开或关闭使用C++风格I/O系统混合C风格的I/O系统的功能。 
+C++为了兼容C，cin和cout要与stdio同步，中间会有一个缓冲，所以导致cin，cout语句输入输出缓慢，
+这时就可以用这个语句，取消cin，cout与stdio的同步，说白了就是提速，效率基本与scanf和printf一致。
+在IO之前将stdio解除绑定，这样做了之后要注意不要同时混用cin和scanf，sscanf, getchar, fgets之类或cout和printf。。。之类。
+（不过实际上使用了using namespace std;之后就可以直接打ios::sync_with_stdio(false);了）
+
+通过tie(0)（0表示NULL，默认是cin.tie(&cout)）来解除cin与cout的绑定，进一步加快执行效率。
+
+换行少用<<endl 多用<<"\n"
+endl插入换行符并刷新输出流
+
+26.利用重载的简便写法
+void sc(int& x) { scanf("%d", &x); }
+void sc(int64_t& x) { scanf("%lld", &x); }//void sc(long long & x) { scanf("%I64d", &x); }
+void sc(double& x) { scanf("%lf", &x); }
+void sc(char& x) { scanf(" %c", &x); }
+void sc(char* x) { scanf("%s", x); }
+
+调用sc(a)
+
+27.判断数组中第一个满足其左侧的数字均小于该数，右侧均大于该数的下标
+int fun(int A[]){
+	int i = 0;
+    while (A[i] < A[i+1]) i++;
+    return i;
+}
+二分法
+class Solution {
+    public int peakIndexInMountainArray(int[] A) {
+        int lo = 0, hi = A.length - 1;
+        while (lo < hi) {
+            int mi = lo + (hi - lo) / 2;
+            if (A[mi] < A[mi + 1])
+                lo = mi + 1;
+            else
+                hi = mi;
+        }
+        return lo;
+    }
+}
+
